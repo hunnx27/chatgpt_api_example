@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class ChatGPTApiContoller {
 
-    String qreQuestion = "안녕, ChatGPT! 나 질문이 있어.";
+    String qreQuestion = "1. For the following commit message, please answer in one word which of the four types of software maintenance is fix, adapt, enhance, and prevent.\n\n\"%s\"";
+
     private final CustomChatGPTService chatGPTService;
 
     @Autowired
@@ -18,7 +19,7 @@ public class ChatGPTApiContoller {
     @PostMapping("/askChatGPT")
     public BaseResponse<ChatGptRes> askToChatGPT(@RequestBody ChatGptReq chatGptReq){
         try {
-            String resultQuestion = qreQuestion + chatGptReq.getQuestion();
+            String resultQuestion = String.format(qreQuestion, chatGptReq.getQuestion());
             ChatGptRes chatGptRes = chatGPTService.getChatResponse(resultQuestion);
 
             return new BaseResponse(chatGptRes);

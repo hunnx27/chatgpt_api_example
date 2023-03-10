@@ -14,13 +14,24 @@ public class CustomChatGPTService {
         this.chatgptService = chatgptService;
     }
 
+    private static final int MAX_RETRIES = 10;
+
     public ChatGptRes getChatResponse(String prompt) throws Exception {
-        try {
-            // ChatGPT 에게 질문을 던집니다.
-            String responseMessage = chatgptService.sendMessage(prompt);
-            return new ChatGptRes(responseMessage);
-        } catch (Exception e){
-            throw new Exception(e);
+        String responseMessage = "";
+        for (int i=0; i<MAX_RETRIES; i++) {
+            try {
+                // ChatGPT 에게 질문을 던집니다.
+                responseMessage = chatgptService.sendMessage(prompt);
+                break;
+            } catch (Exception e) {
+                Thread.sleep(3000);
+
+                if(i == MAX_RETRIES-1){
+                    throw e;
+                }
+            }
         }
+
+        return new ChatGptRes(responseMessage);
     }
 }
